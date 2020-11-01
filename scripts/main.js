@@ -1,12 +1,11 @@
-import { qs, populateTable, retrieveDataFromUserAndPush, clearInputs } from './utillities.js';
+import { qs, populateTable, retrieveDataFromUserAndPush, clearInputs } from './utilities.js';
 import { getFromLocalStorage, saveToLocalStorage } from './localStorage.js';
 
 let budgetItems = [];
 budgetItems = getFromLocalStorage('BudgetItems');
 console.log(budgetItems);
-if(budgetItems != null) { 
-    populateTable(budgetItems);
-}
+if(budgetItems != null) populateTable(budgetItems);
+budgetItems = [];
 qs('#save').addEventListener(
     'click', () => { 
         console.log("is working!")
