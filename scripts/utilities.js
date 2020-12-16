@@ -141,8 +141,8 @@ export function populateTable() {
     document.getElementById('availableBudget').innerHTML = availableBudget;
     
     //pecentage of income gone
-        let percentage = ((100 * totalExpense) / totalIncome);
-        document.getElementById('percentage').innerHTML = percentage.toFixed(2) + '% of total income';
+    let percentage = ((100 * totalExpense) / totalIncome);
+    document.getElementById('percentage').innerHTML = percentage.toFixed(2) + '% of total income';
     
     //populate array & display tables
     budgetItems
