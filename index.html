@@ -6,48 +6,91 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Budget App</title>
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <table>
-        <thead>
-            <tr>
-                <th>Type</th>
-                <th>Date</th>
-                <th>Description</th>
-                <th>Amount</th>
-                <th>Delete</th>
-                <th>Edit</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-    <form action="">
-        <div>
-            <label for="incomeOrExpense">Income or Expense</label>
-            <select id="incomeOrExpense">
-                <option value="Income">Income</option>
-                <option value="Expense">Expense</option>
-            </select>
-        </div>
-        <div>
-            <label for="date">Date:</label>
-            <input type="date" id="date">
-        </div>
-        <div>
-            <label for="description">Description:</label>
-            <input type="text" id="description">
-        </div>
-        <div>
-            <label for="amount">Amount:</label>
-            <input type="text" id="amount">
-        </div>
-        <div>
-            <input type="button" id="save" value="Save">
-        </div>
-    </form>
 
-    <script src="scripts/main.js" type="module"></script>
+    <div class="container">
+        <div class="display">
+            <h2>Available budget in <span id="bdate"></span></h2>
+            <h1>$<span class="amounts" id="availableBudget"></span></h1>
+            <h2 class="mainTitles">
+                Income $
+                <span class="amounts" id="totalIncome"></span>
+            </h2>
+            <h2 class="mainTitles">
+                Expense $
+                <span class="amounts" id="totalExpense"></span>
+            </h2>
+            <span class="amounts" id="percentage"></span>
+
+        </div>
+        <div class="entryForm">
+            <form action="">
+                <div>
+                    <select id="incomeOrExpense" class="button">
+                        <option value="Income">Income</option>
+                        <option value="Expense">Expense</option>
+                    </select>
+                </div>
+                <div>
+                    <input class="button" type="date" id="date">
+                </div>
+                <div>
+                    <input class="button" type="text" id="description" placeholder="Description...">
+                </div>
+                <div>
+                    <input class="button" type="text" id="amount" placeholder="Amount...">
+                </div>
+                <div>
+                    <input class="button" type="button" id="save" value="Save">
+                </div>
+            </form>
+        </div>
+        <div class="tablesContainer">
+            <div>
+                <h2 id="in">Income</h2>
+                <table class="income">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                            <th>Delete</th>
+                            <th>Edit</th>
+                        </tr>
+                    </thead>
+                    <tbody id="incomes"></tbody>
+                </table>
+            </div>
+
+            <div>
+                <h2 id="ex">Expenses</h2>
+                <table class="expense">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                            <th>Delete</th>
+                            <th>Edit</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expenses"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>Elias Monzon</p>
+        <p>Budget App</p>
+        <p id="today"></p>
+    </footer>
 </body>
+<script src="scripts/main.js" type="module"></script>
 
 </html>
