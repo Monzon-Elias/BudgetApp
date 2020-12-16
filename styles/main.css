@@ -1,14 +1,84 @@
 body { 
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
     text-align: center;
+    font-family: 'Permanent Marker', cursive;
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    background-color:snow ;
+}
+
+h1, h2, h3 {margin: 0 auto;}
+
+.button {
+    box-sizing: border-box;
+    cursor: pointer;
+    text-align: center;
+    padding: .6rem;
+    border: 2px solid rgba(38, 110, 176, 1);
+    border-radius: 2rem;
+    font-family: 'Permanent Marker', cursive;
+    font-size: 1rem;
+    background: #c5f49e;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    outline: none;
+    margin-bottom: 1rem;
+}
+
+.button:hover {
+    transition: .1s;
+    box-shadow: 1px 4px 10px;
+    text-shadow: 1px 2px 5px grey;
+}
+input[type="button"]:hover {
+    background-color: #8df13b;
+}
+.display {
+    border-radius: 1rem;
+    margin-top: 3rem;
+}
+.display h1, h2 h3{
+    font-weight: 200;
+}
+.display h1 {
+    padding: 1rem;
+}
+#availableBudget {
+    text-shadow: 3px 6px 10px rgb(8, 177, 50),
+    -3px -6px 10px rgb(8, 177, 50);
+}
+.amounts {
+    letter-spacing: 2px;
+    margin-left: 3px;
+}
+#percentage {
+    font-size: medium;
+}
+.entryForm form {
+    margin-top: 2rem;
     display: flex;
-    flex-direction: column;
+    justify-content: center;
+    flex-wrap: wrap;
 }
-div {
-    display: inline-block;
-}
+
+/*Income & Expenses table*/
 table {
-    margin: 20px;
-    
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    margin: .5rem;
+}
+
+table tbody tr:nth-child(odd) {
+    background-color:rgb(247, 218, 166);
+}
+
+img[src*="del"]:hover {
+    box-shadow: 0px 0px 20px rgb(250, 2, 2);
+    border-radius: 1rem;
+}
+img[src*="edi"]:hover {
+    box-shadow: 0px 0px 20px rgb(15, 117, 2);
+    border-radius: 1rem;
 }
 
 table, tr, td, th {
@@ -16,3 +86,54 @@ table, tr, td, th {
     border-collapse: collapse;
     padding: 5px;
 }
+ .tablesContainer {
+    display: flex;
+    justify-content: center;
+} 
+
+.expense thead {
+    background-color: rgb(250, 113, 79);
+}
+.income thead {
+    background-color: rgb(79, 250, 150);
+}
+
+/*Ends Income & Expenses table*/
+
+#ex, #totalExpense, #percentage {text-shadow: 3px 6px 5px rgb(238, 76, 76) , -3px -6px 5px rgb(238, 76, 76);}
+#in, #totalIncome {text-shadow: 3px 6px 5px rgb(7, 253, 68), -3px -6px 5px rgb(7, 253, 68);}
+
+footer {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-evenly;
+}
+ @media only screen and (max-width: 1000px) {
+    .tablesContainer {
+        flex-direction: column;
+        justify-content: space-around;
+    }
+    table {
+        width: 100%;
+        margin: .5rem; 
+    }
+  }
+
+  @media only screen and (max-width: 750px) {
+      .entryForm form {
+          flex-direction: column;
+      }
+      table {font-size: small;}
+  }
+
+  @media only screen and (max-width: 450px) {
+    
+    table, .entryForm form {
+        margin: 0;
+        font-size: small;
+    }
+    .entryForm form div select, .entryForm form div input{
+        padding: 3px;
+        margin: 3px;
+    }
+} 

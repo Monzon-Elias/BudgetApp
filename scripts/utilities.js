@@ -3,9 +3,25 @@ import { saveToLS, getFromLS } from './localStorage.js';
 
 let _editMode = false;
 let _id = 0;
+
 //get list element
 export function qs(selector) {
     return document.querySelector(selector);
+}
+
+//date feature
+export function dateOfBudget() {
+    let d = new Date();
+    let date = d.getMonth() + 1 + ', ' + d.getFullYear();
+    console.log(date);
+    qs('#bdate').innerHTML = date;   
+}
+
+export function todayDate(){
+    let d = new Date();
+    let date = d.getMonth() + 1 + ' - ' + d.getDate() + ' - ' + d.getFullYear();
+    console.log(d.getDate());
+    qs('#today').innerHTML = date;
 }
 
 //retrieve from user
@@ -22,48 +38,12 @@ const budgetItem = new BudgetItem();
         populateTable();
         clearInputs();
     }
-
-//when budgetItems.length > 0
-export function populateTable() {
-    qs('tbody').innerHTML = '';
-    let budgetItems = [];
-    budgetItems = getFromLS('budgetItems');
-    budgetItems.forEach(
-        (budgetItem) => {
-            qs('tbody').innerHTML += 
-                `<tr>
-                    <td>${budgetItem.Type}</td>
-                    <td>${budgetItem.Date}</td>
-                    <td>${budgetItem.Description}</td>
-                    <td>$${budgetItem.Amount}</td>
-                    <td><img data-id='${budgetItem.id}' src='delete-24px.svg'></td>
-                    <td><img data-id='${budgetItem.id}' src='edit-24px.svg'></td>
-                </tr>`; //I changed "id" to "data-id" so I can use it on the future editBudgetItem() method.
-        }               //"id" can only be used on one element (in this case on the trash icon), and I need to
-                        //create the edit method and attach the data-id to a new "pencil" image that will act
-                        //as a "edit button", as the trash can acts as "delete button".
-    );
-    //this guy populate the list of images (trash cans) and adds an eventListener to each. I tryed this in other
-    //file, but it needs to be inside the PRODUCTION LINE, inside this function (that's important).
-    
-    //delete feature
-    let trashCans = document.querySelectorAll('img[src*="del"]');
-    trashCans.forEach((image) => {
-        image.addEventListener('click', deleteBudgetItem);
-    });
-
-    //edit feature
-    let pencils = document.querySelectorAll('img[src*="edit"]');
-    pencils.forEach((image) => {
-        image.addEventListener('click', editBudgetItem);
-    });
-}
-
+   
 //save budget item
 export function saveBudgetItem() {
     if(_editMode) {
         updateBudgetItem();
-    }else {
+    } else {
         addBudgetItem();
     }
 }
@@ -131,10 +111,146 @@ export function clearInputs() {
         qs('#amount').value = '';
 }
 
+//this method prints the tables on the screen, and calculate total expenses and incomes
+export function populateTable() {
+    qs('#incomes').innerHTML = '';
+    qs('#expenses').innerHTML = '';
+    let budgetItems = [];
+    budgetItems = getFromLS('budgetItems');
+
+    //sum total incomes
+    let totalIncome = budgetItems
+        .filter((budgetItem) => budgetItem.Type == 'Income')
+        .reduce((total, budgetItem) => {
+            return parseFloat(total)  + parseFloat(budgetItem.Amount);
+        }, 0);
+    console.log(totalIncome);
+    document.getElementById('totalIncome').innerHTML = totalIncome;
+    
+    //sum total expenses
+    let totalExpense = budgetItems
+    .filter((budgetItem) => budgetItem.Type == 'Expense')
+    .reduce((total, budgetItem) => {
+        return parseFloat(total)  + parseFloat(budgetItem.Amount);
+    }, 0);
+    console.log(totalExpense);
+    document.getElementById('totalExpense').innerHTML = totalExpense;
+
+    //available budget
+    let availableBudget = totalIncome - totalExpense;
+    document.getElementById('availableBudget').innerHTML = availableBudget;
+    
+    //pecentage of income gone
+        let percentage = ((100 * totalExpense) / totalIncome);
+        document.getElementById('percentage').innerHTML = percentage.toFixed(2) + '% of total income';
+    
+    //populate array & display tables
+    budgetItems
+    .filter((budgetItem) => budgetItem.Type == 'Income')
+    .forEach(
+        (budgetItem) => {
+            qs('#incomes').innerHTML += 
+                `<tr>
+                    <td>${budgetItem.Type}</td>
+                    <td>${budgetItem.Date}</td>
+                    <td>${budgetItem.Description}</td>
+                    <td>$${budgetItem.Amount}</td>
+
+                    <td><img data-id='${budgetItem.id}' src='delete-24px.svg'></td>
+                    <td><img data-id='${budgetItem.id}' src='edit-24px.svg'></td>
+                </tr>`; 
+        }               
+    );
+    budgetItems
+    .filter((budgetItem) => budgetItem.Type == 'Expense')
+    .forEach(
+        (budgetItem) => {
+            qs('#expenses').innerHTML += 
+                `<tr>
+                    <td>${budgetItem.Type}</td>
+                    <td>${budgetItem.Date}</td>
+                    <td>${budgetItem.Description}</td>
+                    <td>$${budgetItem.Amount}</td>
+
+                    <td><img data-id='${budgetItem.id}' src='delete-24px.svg'></td>
+                    <td><img data-id='${budgetItem.id}' src='edit-24px.svg'></td>
+                </tr>`; 
+        }               
+    );
+    //delete feature
+    let trashCans = document.querySelectorAll('img[src*="del"]');
+    trashCans.forEach((image) => {
+        image.addEventListener('click', deleteBudgetItem);
+    });
+
+    //edit feature
+    let pencils = document.querySelectorAll('img[src*="edit"]');
+    pencils.forEach((image) => {
+        image.addEventListener('click', editBudgetItem);
+    });
+}
 
 
 
 
+
+
+
+ 
+//this method prints the table on the screen, and calculate total expenses and incomes
+// export function populateTable() {
+//     qs('tbody').innerHTML = '';
+//     let budgetItems = [];
+//     budgetItems = getFromLS('budgetItems');
+
+//     //sum total incomes
+//     let totalIncome = budgetItems
+//         .filter((budgetItem) => budgetItem.Type == 'Income')
+//         .reduce((total, budgetItem) => {
+//             return parseFloat(total)  + parseFloat(budgetItem.Amount);
+//         }, 0);
+//     console.log(totalIncome);
+    
+//     //sum total expenses
+//     let totalExpense = budgetItems
+//     .filter((budgetItem) => budgetItem.Type == 'Expense')
+//     .reduce((total, budgetItem) => {
+//         return parseFloat(total)  + parseFloat(budgetItem.Amount);
+//     }, 0);
+// console.log(totalExpense);
+
+//     budgetItems.forEach(
+//         (budgetItem) => {
+//             qs('tbody').innerHTML += 
+//                 `<tr>
+//                     <td>${budgetItem.Type}</td>
+//                     <td>${budgetItem.Date}</td>
+//                     <td>${budgetItem.Description}</td>
+//                     <td>$${budgetItem.Amount}</td>
+
+//                     <td><img data-id='${budgetItem.id}' src='delete-24px.svg'></td>
+//                     <td><img data-id='${budgetItem.id}' src='edit-24px.svg'></td>
+//                 </tr>`; //I changed "id" to "data-id" so I can use it on the future editBudgetItem() method.
+//         }               //"id" can only be used on one element (in this case on the trash icon), and I need to
+//                         //create the edit method and attach the data-id to a new "pencil" image that will act
+//                         //as a "edit button", as the trash can acts as "delete button".
+//     );
+
+//     //this guy populate the list of images (trash cans) and adds an eventListener to each. I tryed this in other
+//     //file, but it needs to be inside the PRODUCTION LINE, inside this function (that's important).
+    
+//     //delete feature
+//     let trashCans = document.querySelectorAll('img[src*="del"]');
+//     trashCans.forEach((image) => {
+//         image.addEventListener('click', deleteBudgetItem);
+//     });
+
+//     //edit feature
+//     let pencils = document.querySelectorAll('img[src*="edit"]');
+//     pencils.forEach((image) => {
+//         image.addEventListener('click', editBudgetItem);
+//     });
+// }
 
 
 
