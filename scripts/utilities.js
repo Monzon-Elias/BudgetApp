@@ -1,4 +1,4 @@
-import { BudgetItem } from './BudgetItem.js';
+import { BudgetItem } from './budgetItem.js';
 import { saveToLS, getFromLS } from './localStorage.js';
 
 let _editMode = false;
