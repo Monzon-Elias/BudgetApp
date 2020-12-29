@@ -105,13 +105,13 @@ export function updateBudgetItem() {
 
 //clear user input
 export function clearInputs() {
-    qs('#incomeOrExpense').value = '';
         qs('#date').value = '';
         qs('#description').value = '';
         qs('#amount').value = '';
 }
-
+/********************************************************************************** */
 //this method prints the tables on the screen, and calculate total expenses and incomes
+/********************************************************************************** */
 export function populateTable() {
     qs('#incomes').innerHTML = '';
     qs('#expenses').innerHTML = '';
@@ -125,7 +125,7 @@ export function populateTable() {
             return parseFloat(total)  + parseFloat(budgetItem.Amount);
         }, 0);
     console.log(totalIncome);
-    document.getElementById('totalIncome').innerHTML = totalIncome;
+    qs('#totalIncome').innerHTML = totalIncome;
     
     //sum total expenses
     let totalExpense = budgetItems
@@ -134,15 +134,15 @@ export function populateTable() {
         return parseFloat(total)  + parseFloat(budgetItem.Amount);
     }, 0);
     console.log(totalExpense);
-    document.getElementById('totalExpense').innerHTML = totalExpense;
+    qs('#totalExpense').innerHTML = totalExpense;
 
     //available budget
     let availableBudget = totalIncome - totalExpense;
-    document.getElementById('availableBudget').innerHTML = availableBudget;
-    
+    qs('#availableBudget').innerHTML = availableBudget;
+        
     //pecentage of income gone
     let percentage = ((100 * totalExpense) / totalIncome);
-    document.getElementById('percentage').innerHTML = percentage.toFixed(2) + '% of total income';
+    qs('#percentage').innerHTML = percentage.toFixed(2) + '% of total income';
     
     //populate array & display tables
     budgetItems
@@ -177,6 +177,7 @@ export function populateTable() {
                 </tr>`; 
         }               
     );
+
     //delete feature
     let trashCans = document.querySelectorAll('img[src*="del"]');
     trashCans.forEach((image) => {
@@ -188,9 +189,18 @@ export function populateTable() {
     pencils.forEach((image) => {
         image.addEventListener('click', editBudgetItem);
     });
+
+    //toggle shadow
+    shadowToggle(availableBudget);
 }
 
-
+//shadow change on available budget
+function shadowToggle(availableBudget) {
+    if(availableBudget < 0) 
+    qs('#availableBudget').style.textShadow = "3px 6px 5px rgb(238, 76, 76) , -3px -6px 5px rgb(238, 76, 76)";
+    else 
+    qs('#availableBudget').style.textShadow = "3px 6px 5px rgb(7, 253, 68), -3px -6px 5px rgb(7, 253, 68)";
+}
 
 
 
