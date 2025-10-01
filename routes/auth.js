@@ -119,11 +119,6 @@ router.post('/reset-password', async (req, res) => {
 // Login
 router.post('/login', async (req, res) => {
     try {
-        console.log('🔐 Login attempt:', {
-            email: req.body.email,
-            hasPassword: !!req.body.password,
-            timestamp: new Date().toISOString()
-        });
         
         const { email, password } = req.body;
         const db = getDB();

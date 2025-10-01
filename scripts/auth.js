@@ -1,6 +1,6 @@
 const API_URL = window.location.hostname === 'localhost' 
     ? 'http://localhost:3000/api' 
-    : 'https://budget-app-self-nu.vercel.app/api';
+    : 'https://budget-app-backend.railway.app/api';
 
 // Login form handler
 const loginForm = document.getElementById('loginForm');
@@ -13,21 +13,12 @@ if (loginForm) {
         const errorMessage = document.getElementById('errorMessage');
         
     try {
-        console.log('🌐 Frontend: Sending login request to:', `${API_URL}/auth/login`);
-        console.log('🌐 Frontend: Request data:', { email, hasPassword: !!password });
-        
         const response = await fetch(`${API_URL}/auth/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ email, password })
-        });
-        
-        console.log('🌐 Frontend: Response received:', {
-            status: response.status,
-            statusText: response.statusText,
-            ok: response.ok
         });
             
             const data = await response.json();

@@ -2,7 +2,7 @@
 
 const API_URL = window.location.hostname === 'localhost' 
     ? 'http://localhost:3000/api' 
-    : 'https://budget-app-self-nu.vercel.app/api';
+    : 'https://budget-app-backend.railway.app/api';
 
 // Variables globales
 let budgetItems = [];
