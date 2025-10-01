@@ -1,5 +1,5 @@
 const API_URL = process.env.NODE_ENV === 'production' 
-    ? 'https://budget-app-backend.onrender.com/api' 
+    ? 'https://budget-app-backend.vercel.app/api' 
     : 'http://localhost:3000/api';
 
 // Login form handler
