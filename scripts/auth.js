@@ -1,6 +1,6 @@
-const API_URL = process.env.NODE_ENV === 'production' 
-    ? 'https://budget-app-self-nu.vercel.app/api' 
-    : 'http://localhost:3000/api';
+const API_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000/api' 
+    : 'https://budget-app-self-nu.vercel.app/api';
 
 // Login form handler
 const loginForm = document.getElementById('loginForm');
