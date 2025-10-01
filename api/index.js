@@ -8,7 +8,10 @@ import budgetRoutes from '../routes/budget.js';
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: ['https://budgetsite.netlify.app', 'http://localhost:5500'],
+    credentials: true
+}));
 app.use(express.json());
 
 // Rutas
