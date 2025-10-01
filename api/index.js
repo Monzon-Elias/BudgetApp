@@ -7,6 +7,18 @@ import budgetRoutes from '../routes/budget.js';
 
 const app = express();
 
+// Middleware de logging
+app.use((req, res, next) => {
+    console.log('🔍 Request received:', {
+        method: req.method,
+        url: req.url,
+        origin: req.headers.origin,
+        userAgent: req.headers['user-agent'],
+        timestamp: new Date().toISOString()
+    });
+    next();
+});
+
 // Middleware
 app.use(cors({
     origin: true, // Permitir todos los orígenes temporalmente

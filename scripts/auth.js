@@ -12,14 +12,23 @@ if (loginForm) {
         const password = document.getElementById('password').value;
         const errorMessage = document.getElementById('errorMessage');
         
-        try {
-            const response = await fetch(`${API_URL}/auth/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email, password })
-            });
+    try {
+        console.log('🌐 Frontend: Sending login request to:', `${API_URL}/auth/login`);
+        console.log('🌐 Frontend: Request data:', { email, hasPassword: !!password });
+        
+        const response = await fetch(`${API_URL}/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password })
+        });
+        
+        console.log('🌐 Frontend: Response received:', {
+            status: response.status,
+            statusText: response.statusText,
+            ok: response.ok
+        });
             
             const data = await response.json();
             
