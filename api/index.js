@@ -9,8 +9,10 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    origin: ['https://budgetsite.netlify.app', 'http://localhost:5500'],
-    credentials: true
+    origin: true, // Permitir todos los orígenes temporalmente
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 
