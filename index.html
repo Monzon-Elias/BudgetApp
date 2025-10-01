@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Budget App</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💸</text></svg>">
     <link rel="stylesheet" href="styles/main.css">
     <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
 </head>
@@ -12,19 +13,45 @@
 <body>
 
     <div class="container">
+        <div class="user-info">
+            <span id="userEmail"></span>
+            <button id="logoutBtn" class="logout-btn">Logout 👋</button>
+        </div>
         <div class="display">
-            <h2>Available budget in <span id="bdate"></span></h2>
+            <div class="budget-header">
+                <span class="budget-emoji">📝</span>
+                <h2>Available budget in <span id="bdate"></span></h2>
+            </div>
             <h1>$<span class="amounts" id="availableBudget"></span></h1>
-            <h2 class="mainTitles">
-                Income $
-                <span class="amounts" id="totalIncome"></span>
-            </h2>
-            <h2 class="mainTitles">
-                Expense $
-                <span class="amounts" id="totalExpense"></span>
-            </h2>
-            <span class="amounts" id="percentage"></span>
-
+            <div class="budget-stats">
+                <div class="stat-item income-stat">
+                    <span class="stat-emoji">💰</span>
+                    <h2 class="mainTitles">
+                        $
+                        <span class="amounts" id="totalIncome"></span>
+                    </h2>
+                </div>
+                <div class="stat-item expense-stat">
+                    <span class="stat-emoji">💸</span>
+                    <div class="mainTitles">
+                        $
+                        <span class="amounts" id="totalExpense"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="progress-bar-container">
+                <span class="progress-emoji-left">😎</span>
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" id="progressBar">
+                        <span class="progress-face" id="progressFace">😀</span>
+                    </div>
+                </div>
+                <span class="progress-emoji-right">💀</span>
+            </div>
+            <div class="percentage-container">
+                <span class="percentage-emoji">⏳</span>
+                <span class="amounts" id="percentage"></span>
+            </div>
         </div>
         <div class="entryForm">
             <form action="">
@@ -90,6 +117,6 @@
         <p id="today"></p>
     </footer>
 </body>
-<script src="scripts/main.js" type="module"></script>
+<script src="scripts/app.js"></script>
 
 </html>
