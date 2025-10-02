@@ -1,6 +1,6 @@
 const API_URL = window.location.hostname === 'localhost' 
     ? 'http://localhost:3000/api' 
-    : '/.netlify/functions';
+    : 'https://budget-app-backend.onrender.com/api';
 
 // Login form handler
 const loginForm = document.getElementById('loginForm');
