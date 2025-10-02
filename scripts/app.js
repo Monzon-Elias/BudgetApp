@@ -2,7 +2,7 @@
 
 const API_URL = window.location.hostname === 'localhost' 
     ? 'http://localhost:3000/api' 
-    : 'https://budget-app-backend.onrender.com/api';
+    : 'https://budgetapp-n1u1.onrender.com/api';
 
 // Variables globales
 let budgetItems = [];
