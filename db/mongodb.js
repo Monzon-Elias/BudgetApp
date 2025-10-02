@@ -14,8 +14,7 @@ export async function connectDB() {
             socketTimeoutMS: 20000,
             tls: true,
             tlsAllowInvalidCertificates: false,
-            tlsAllowInvalidHostnames: false,
-            tlsInsecure: false
+            tlsAllowInvalidHostnames: false
         });
         await client.connect();
         db = client.db('budgetAppDb');
