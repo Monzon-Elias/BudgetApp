@@ -331,9 +331,13 @@ document.addEventListener('DOMContentLoaded', async function() {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     
     if (!token) {
-        window.location.href = 'login.html';
+        // Redirect immediately without showing content
+        window.location.replace('login.html');
         return;
     }
+    
+    // Show main container after authentication check
+    qs('#mainContainer').style.display = 'block';
     
     // Display user info
     if (user.email) {

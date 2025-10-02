@@ -42,80 +42,76 @@ exports.handler = async (event, context) => {
         const client = await connectToDatabase();
         const db = client.db('budgetAppDb');
 
-        if (event.path === '/auth/login' && event.httpMethod === 'POST') {
-            const { email, password } = JSON.parse(event.body);
+        if (event.path === '/auth' && event.httpMethod === 'POST') {
+            const { email, password, action } = JSON.parse(event.body);
+            
+            if (action === 'register') {
+                // Register logic
+                const existingUser = await db.collection('Users').findOne({ email });
+                if (existingUser) {
+                    return {
+                        statusCode: 400,
+                        headers,
+                        body: JSON.stringify({ error: 'Email already registered' }),
+                    };
+                }
 
-            // Buscar usuario
-            const user = await db.collection('Users').findOne({ email });
-            if (!user) {
+                const hashedPassword = await bcrypt.hash(password, 10);
+                const newUser = {
+                    email,
+                    password: hashedPassword,
+                    createdAt: new Date()
+                };
+
+                await db.collection('Users').insertOne(newUser);
+
                 return {
-                    statusCode: 401,
+                    statusCode: 201,
                     headers,
-                    body: JSON.stringify({ error: 'Invalid credentials' }),
+                    body: JSON.stringify({
+                        message: 'User registered successfully. You can now login.',
+                        email
+                    }),
+                };
+            } else {
+                // Login logic
+                // Buscar usuario
+                const user = await db.collection('Users').findOne({ email });
+                if (!user) {
+                    return {
+                        statusCode: 401,
+                        headers,
+                        body: JSON.stringify({ error: 'Invalid credentials' }),
+                    };
+                }
+
+                // Verificar contraseña
+                const isPasswordValid = await bcrypt.compare(password, user.password);
+                if (!isPasswordValid) {
+                    return {
+                        statusCode: 401,
+                        headers,
+                        body: JSON.stringify({ error: 'Invalid credentials' }),
+                    };
+                }
+
+                // Crear JWT token
+                const token = jwt.sign(
+                    { userId: user._id, email: user.email },
+                    JWT_SECRET,
+                    { expiresIn: '7d' }
+                );
+
+                return {
+                    statusCode: 200,
+                    headers,
+                    body: JSON.stringify({
+                        message: 'Login successful',
+                        token,
+                        user: { email: user.email, id: user._id }
+                    }),
                 };
             }
-
-            // Verificar contraseña
-            const isPasswordValid = await bcrypt.compare(password, user.password);
-            if (!isPasswordValid) {
-                return {
-                    statusCode: 401,
-                    headers,
-                    body: JSON.stringify({ error: 'Invalid credentials' }),
-                };
-            }
-
-            // Crear JWT token
-            const token = jwt.sign(
-                { userId: user._id, email: user.email },
-                JWT_SECRET,
-                { expiresIn: '7d' }
-            );
-
-            return {
-                statusCode: 200,
-                headers,
-                body: JSON.stringify({
-                    message: 'Login successful',
-                    token,
-                    user: { email: user.email, id: user._id }
-                }),
-            };
-        }
-
-        if (event.path === '/auth/register' && event.httpMethod === 'POST') {
-            const { email, password } = JSON.parse(event.body);
-
-            // Verificar si el usuario ya existe
-            const existingUser = await db.collection('Users').findOne({ email });
-            if (existingUser) {
-                return {
-                    statusCode: 400,
-                    headers,
-                    body: JSON.stringify({ error: 'Email already registered' }),
-                };
-            }
-
-            // Hash password
-            const hashedPassword = await bcrypt.hash(password, 10);
-
-            // Crear usuario
-            const newUser = {
-                email,
-                password: hashedPassword,
-                createdAt: new Date()
-            };
-
-            await db.collection('Users').insertOne(newUser);
-
-            return {
-                statusCode: 201,
-                headers,
-                body: JSON.stringify({
-                    message: 'User registered successfully. You can now login.',
-                    email
-                }),
-            };
         }
 
         return {
