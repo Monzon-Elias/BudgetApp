@@ -9,15 +9,9 @@ export async function connectDB() {
         client = new MongoClient(config.mongodbUri, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
-            serverSelectionTimeoutMS: 5000,
-            connectTimeoutMS: 10000,
-            socketTimeoutMS: 45000,
-            maxPoolSize: 10,
-            minPoolSize: 5,
-            ssl: true,
-            sslValidate: true,
-            tlsAllowInvalidCertificates: false,
-            tlsAllowInvalidHostnames: false
+            serverSelectionTimeoutMS: 10000,
+            connectTimeoutMS: 15000,
+            socketTimeoutMS: 20000
         });
         await client.connect();
         db = client.db('budgetAppDb');
