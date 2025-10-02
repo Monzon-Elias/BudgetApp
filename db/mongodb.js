@@ -7,6 +7,8 @@ let client = null;
 export async function connectDB() {
     try {
         client = new MongoClient(config.mongodbUri, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
             serverSelectionTimeoutMS: 5000,
             connectTimeoutMS: 10000,
             socketTimeoutMS: 45000,
