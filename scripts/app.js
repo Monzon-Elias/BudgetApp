@@ -114,6 +114,17 @@ async function addBudgetItem() {
     const amount = qs('#amount').value;
     const date = qs('#date').value;
     
+    // Validate required fields
+    if (!description.trim()) {
+        alert('Please enter a description');
+        return;
+    }
+    
+    if (!amount || parseFloat(amount) <= 0) {
+        alert('Please enter a valid amount');
+        return;
+    }
+    
     try {
         const response = await fetchWithAuth(`${API_URL}/budget/items`, {
             method: 'POST',
@@ -190,6 +201,16 @@ async function updateBudgetItem() {
     const amount = qs('#amount').value;
     const date = qs('#date').value;
     
+    // Validate required fields
+    if (!description.trim()) {
+        alert('Please enter a description');
+        return;
+    }
+    
+    if (!amount || parseFloat(amount) <= 0) {
+        alert('Please enter a valid amount');
+        return;
+    }
     
     try {
         const response = await fetchWithAuth(`${API_URL}/budget/items/${_id}`, {
