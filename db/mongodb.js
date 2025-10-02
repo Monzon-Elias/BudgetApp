@@ -13,7 +13,11 @@ export async function connectDB() {
             connectTimeoutMS: 10000,
             socketTimeoutMS: 45000,
             maxPoolSize: 10,
-            minPoolSize: 5
+            minPoolSize: 5,
+            ssl: true,
+            sslValidate: true,
+            tlsAllowInvalidCertificates: false,
+            tlsAllowInvalidHostnames: false
         });
         await client.connect();
         db = client.db('budgetAppDb');
