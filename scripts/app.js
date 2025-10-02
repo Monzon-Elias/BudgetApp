@@ -47,6 +47,9 @@ async function fetchWithAuth(url, options = {}) {
 
 async function loadBudgetItems() {
     try {
+        // Show loading spinner
+        showDataLoading();
+        
         const response = await fetchWithAuth(`${API_URL}/budget/items`);
         if (!response) return;
         
@@ -63,6 +66,9 @@ async function loadBudgetItems() {
         populateTable();
     } catch (error) {
         console.error('Error loading budget items:', error);
+    } finally {
+        // Hide loading spinner
+        hideDataLoading();
     }
 }
 
@@ -322,6 +328,21 @@ function updateFaces(percentage) {
     const currentFace = faces[Math.min(faceIndex, faces.length - 1)];
     
     progressFace.textContent = currentFace;
+}
+
+// Loading spinner functions for main page
+function showDataLoading() {
+    const spinner = document.getElementById('dataLoadingSpinner');
+    if (spinner) {
+        spinner.style.display = 'flex';
+    }
+}
+
+function hideDataLoading() {
+    const spinner = document.getElementById('dataLoadingSpinner');
+    if (spinner) {
+        spinner.style.display = 'none';
+    }
 }
 
 // Inicialización cuando se carga la página
