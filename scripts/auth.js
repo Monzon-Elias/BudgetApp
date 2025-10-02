@@ -2,6 +2,21 @@ const API_URL = window.location.hostname === 'localhost'
     ? 'http://localhost:3000/api' 
     : 'https://budgetapp-n1u1.onrender.com/api';
 
+// Loading spinner functions
+function showLoading() {
+    const spinner = document.getElementById('loadingSpinner');
+    if (spinner) {
+        spinner.style.display = 'flex';
+    }
+}
+
+function hideLoading() {
+    const spinner = document.getElementById('loadingSpinner');
+    if (spinner) {
+        spinner.style.display = 'none';
+    }
+}
+
 // Login form handler
 const loginForm = document.getElementById('loginForm');
 if (loginForm) {
@@ -11,6 +26,9 @@ if (loginForm) {
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const errorMessage = document.getElementById('errorMessage');
+        
+        // Show loading spinner
+        showLoading();
         
     try {
         const response = await fetch(`${API_URL}/auth/login`, {
@@ -36,6 +54,9 @@ if (loginForm) {
         } catch (error) {
             console.error('Login error:', error);
             showError(errorMessage, 'Failed to connect to server');
+        } finally {
+            // Hide loading spinner
+            hideLoading();
         }
     });
 }
@@ -70,6 +91,9 @@ if (registerForm) {
             return false;
         }
         
+        // Show loading spinner
+        showLoading();
+        
         try {
             const response = await fetch(`${API_URL}/auth/register`, {
                 method: 'POST',
@@ -96,6 +120,9 @@ if (registerForm) {
         } catch (error) {
             console.error('Registration error:', error);
             showError(errorMessage, 'Failed to connect to server');
+        } finally {
+            // Hide loading spinner
+            hideLoading();
         }
     });
 }
