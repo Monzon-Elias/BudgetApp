@@ -4,17 +4,14 @@ const jwt = require('jsonwebtoken');
 const MONGODB_URI = 'mongodb+srv://elios:eliosmbaPass1!!@budgetapp.d6ntesg.mongodb.net/budgetAppDb?retryWrites=true&w=majority';
 const JWT_SECRET = 'budgetApp2025SecretKey!SuperSecure#MonzonProject';
 
-let cachedClient = null;
+let client = null;
 
-async function connectToDatabase() {
-    if (cachedClient) {
-        return cachedClient;
+async function getDB() {
+    if (!client) {
+        client = new MongoClient(MONGODB_URI);
+        await client.connect();
     }
-
-    const client = new MongoClient(MONGODB_URI);
-    await client.connect();
-    cachedClient = client;
-    return client;
+    return client.db('budgetAppDb');
 }
 
 function verifyToken(event) {
@@ -22,13 +19,11 @@ function verifyToken(event) {
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
         throw new Error('No token provided');
     }
-
     const token = authHeader.split(' ')[1];
     return jwt.verify(token, JWT_SECRET);
 }
 
 exports.handler = async (event, context) => {
-    // CORS headers
     const headers = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -36,42 +31,29 @@ exports.handler = async (event, context) => {
     };
 
     if (event.httpMethod === 'OPTIONS') {
-        return {
-            statusCode: 200,
-            headers,
-            body: '',
-        };
+        return { statusCode: 200, headers, body: '' };
     }
 
     try {
-        const client = await connectToDatabase();
-        const db = client.db('budgetAppDb');
-
-        // Verificar autenticación
         const user = verifyToken(event);
+        const db = await getDB();
 
-        if (event.path === '/budget/items' && event.httpMethod === 'GET') {
-            const userBudget = await db.collection('BudgetInfo')
-                .findOne({ userId: user.userId.toString() });
-            
-            if (!userBudget || !userBudget.budgetEntry) {
-                return {
-                    statusCode: 200,
-                    headers,
-                    body: JSON.stringify([]),
-                };
-            }
+        if (event.httpMethod === 'GET') {
+            // Get all items
+            const userBudget = await db.collection('BudgetInfo').findOne({ userId: user.userId.toString() });
+            const items = userBudget?.budgetEntry || [];
             
             return {
                 statusCode: 200,
                 headers,
-                body: JSON.stringify(userBudget.budgetEntry),
+                body: JSON.stringify(items)
             };
         }
 
-        if (event.path === '/budget/items' && event.httpMethod === 'POST') {
+        if (event.httpMethod === 'POST') {
+            // Create new item
             const { type, description, amount, dateCreated } = JSON.parse(event.body);
-
+            
             const newEntry = {
                 _id: new ObjectId(),
                 type,
@@ -92,14 +74,14 @@ exports.handler = async (event, context) => {
             return {
                 statusCode: 201,
                 headers,
-                body: JSON.stringify(newEntry),
+                body: JSON.stringify(newEntry)
             };
         }
 
         return {
-            statusCode: 404,
+            statusCode: 405,
             headers,
-            body: JSON.stringify({ error: 'Not found' }),
+            body: JSON.stringify({ error: 'Method not allowed' })
         };
 
     } catch (error) {
@@ -109,14 +91,14 @@ exports.handler = async (event, context) => {
             return {
                 statusCode: 401,
                 headers,
-                body: JSON.stringify({ error: 'Invalid token' }),
+                body: JSON.stringify({ error: 'Invalid token' })
             };
         }
 
         return {
             statusCode: 500,
             headers,
-            body: JSON.stringify({ error: 'Internal server error' }),
+            body: JSON.stringify({ error: 'Internal server error' })
         };
     }
 };
