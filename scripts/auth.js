@@ -13,12 +13,12 @@ if (loginForm) {
         const errorMessage = document.getElementById('errorMessage');
         
     try {
-        const response = await fetch(`${API_URL}/auth`, {
+        const response = await fetch(`${API_URL}/auth/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ email, password, action: 'login' })
+            body: JSON.stringify({ email, password })
         });
             
             const data = await response.json();
@@ -71,12 +71,12 @@ if (registerForm) {
         }
         
         try {
-            const response = await fetch(`${API_URL}/auth`, {
+            const response = await fetch(`${API_URL}/auth/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ email, password, action: 'register' })
+                body: JSON.stringify({ email, password })
             });
             
             const data = await response.json();
