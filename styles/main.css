@@ -362,26 +362,22 @@ footer {
     display: flex;
     justify-content: space-evenly;
 }
- @media only screen and (max-width: 1000px) {
-    .tablesContainer {
-        flex-direction: column;
-        justify-content: space-around;
-    }
-    table {
-        width: 100%;
-        margin: .5rem; 
-    }
-  }
 
-  @media only screen and (max-width: 750px) {
+  @media only screen and (max-width: 850px) {
       .entryForm form {
           flex-direction: column;
       }
       table {font-size: small;}
   }
+@media only screen and (max-width: 700px) {
+  .tablesContainer {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+}
 
   @media only screen and (max-width: 450px) {
-    
     table, .entryForm form {
         margin: 0;
         font-size: small;
@@ -394,11 +390,6 @@ footer {
     .display {
         margin: 1rem;
         padding: 1rem;
-    }
-    
-    .budget-stats {
-        flex-direction: column;
-        gap: 0.5rem;
     }
     
     .stat-item {

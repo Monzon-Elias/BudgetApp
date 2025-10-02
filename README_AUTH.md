@@ -102,7 +102,7 @@ DELETE /api/budget/items/:id
 ```javascript
 {
   _id: ObjectId,
-  userId: ObjectId,
+  userId: String,
   type: "Income" | "Expense",
   date: Date,
   description: String,
