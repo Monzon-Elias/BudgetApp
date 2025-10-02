@@ -11,7 +11,11 @@ export async function connectDB() {
             useUnifiedTopology: true,
             serverSelectionTimeoutMS: 10000,
             connectTimeoutMS: 15000,
-            socketTimeoutMS: 20000
+            socketTimeoutMS: 20000,
+            tls: true,
+            tlsAllowInvalidCertificates: false,
+            tlsAllowInvalidHostnames: false,
+            tlsInsecure: false
         });
         await client.connect();
         db = client.db('budgetAppDb');
