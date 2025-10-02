@@ -441,4 +441,37 @@ footer {
     text-align: center;
     margin: 0;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Input Validation Styles */
+.input-error {
+    border: 2px solid #e74c3c !important;
+    box-shadow: 0 0 5px rgba(231, 76, 60, 0.3) !important;
+    animation: shake 0.5s ease-in-out;
+}
+
+.error-message {
+    position: absolute;
+    bottom: -20px;
+    left: 10px;
+    color: #e74c3c;
+    font-size: 0.8rem;
+    font-family: 'Permanent Marker', cursive;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.error-message.show {
+    opacity: 1;
+}
+
+.input-container {
+    position: relative;
+    margin-bottom: 5px;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
 } 

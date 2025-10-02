@@ -107,6 +107,30 @@ function formatDate(dateString) {
     return `${parseInt(month)}/${parseInt(day)}`;
 }
 
+// Funciones de validación visual
+function showFieldError(inputId, errorText) {
+    const input = document.getElementById(inputId);
+    const errorElement = document.getElementById(inputId + 'Error');
+    
+    input.classList.add('input-error');
+    errorElement.textContent = errorText;
+    errorElement.classList.add('show');
+}
+
+function clearFieldError(inputId) {
+    const input = document.getElementById(inputId);
+    const errorElement = document.getElementById(inputId + 'Error');
+    
+    input.classList.remove('input-error');
+    errorElement.classList.remove('show');
+    errorElement.textContent = '';
+}
+
+function clearAllErrors() {
+    clearFieldError('description');
+    clearFieldError('amount');
+}
+
 // Funciones de presupuesto
 async function addBudgetItem() {
     const type = qs('#incomeOrExpense').value;
@@ -114,14 +138,23 @@ async function addBudgetItem() {
     const amount = qs('#amount').value;
     const date = qs('#date').value;
     
+    // Clear previous errors
+    clearAllErrors();
+    
     // Validate required fields
+    let hasError = false;
+    
     if (!description.trim()) {
-        alert('Please enter a description');
-        return;
+        showFieldError('description', 'Description is required');
+        hasError = true;
     }
     
     if (!amount || parseFloat(amount) <= 0) {
-        alert('Please enter a valid amount');
+        showFieldError('amount', 'Please enter a valid amount');
+        hasError = true;
+    }
+    
+    if (hasError) {
         return;
     }
     
@@ -175,6 +208,9 @@ function editBudgetItem(e) {
     _id = budgetItemId;
     console.log('Editing item:', budgetItemId);
     
+    // Clear any validation errors when editing
+    clearAllErrors();
+    
     const budgetItem = budgetItems.find((item) => item.id == budgetItemId);
     if (budgetItem) {
         qs('#incomeOrExpense').value = budgetItem.Type;
@@ -201,14 +237,23 @@ async function updateBudgetItem() {
     const amount = qs('#amount').value;
     const date = qs('#date').value;
     
+    // Clear previous errors
+    clearAllErrors();
+    
     // Validate required fields
+    let hasError = false;
+    
     if (!description.trim()) {
-        alert('Please enter a description');
-        return;
+        showFieldError('description', 'Description is required');
+        hasError = true;
     }
     
     if (!amount || parseFloat(amount) <= 0) {
-        alert('Please enter a valid amount');
+        showFieldError('amount', 'Please enter a valid amount');
+        hasError = true;
+    }
+    
+    if (hasError) {
         return;
     }
     
@@ -235,6 +280,9 @@ function clearInputs() {
     qs('#date').value = '';
     qs('#description').value = '';
     qs('#amount').value = '';
+    
+    // Clear validation errors when clearing inputs
+    clearAllErrors();
 }
 
 function populateTable() {
@@ -388,6 +436,15 @@ document.addEventListener('DOMContentLoaded', async function() {
     
     // Logout button
     qs('#logoutBtn').addEventListener('click', logout);
+    
+    // Clear validation errors when user starts typing
+    qs('#description').addEventListener('input', function() {
+        clearFieldError('description');
+    });
+    
+    qs('#amount').addEventListener('input', function() {
+        clearFieldError('amount');
+    });
 
     // Cargar datos del servidor
     await loadBudgetItems();
