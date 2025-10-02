@@ -406,6 +406,10 @@ footer {
         width: 20px;
         height: 20px;
     }
+    .error-message {
+        top: 32px;
+        font-size: 12px !important;
+    }
 }
 
 /* Data Loading Spinner */
@@ -452,8 +456,8 @@ footer {
 
 .error-message {
     position: absolute;
-    bottom: -20px;
-    left: 10px;
+    margin: 0 auto;
+    bottom: -5px;
     color: #e74c3c;
     font-size: 0.8rem;
     font-family: 'Permanent Marker', cursive;
@@ -466,6 +470,9 @@ footer {
 }
 
 .input-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: relative;
     margin-bottom: 5px;
 }
