@@ -1,5 +1,5 @@
-const { MongoClient, ObjectId } = require('mongodb');
-const jwt = require('jsonwebtoken');
+import { MongoClient, ObjectId } from 'mongodb';
+import jwt from 'jsonwebtoken';
 
 const MONGODB_URI = 'mongodb+srv://elios:eliosmbaPass1!!@budgetapp.d6ntesg.mongodb.net/budgetAppDb?retryWrites=true&w=majority';
 const JWT_SECRET = 'budgetApp2025SecretKey!SuperSecure#MonzonProject';
@@ -31,7 +31,7 @@ function verifyToken(event) {
     return jwt.verify(token, JWT_SECRET);
 }
 
-exports.handler = async (event, context) => {
+export const handler = async (event, context) => {
     // CORS headers
     const headers = {
         'Access-Control-Allow-Origin': '*',
