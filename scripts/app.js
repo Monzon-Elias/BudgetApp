@@ -384,9 +384,9 @@ function updateFaces(percentage) {
         return;
     }
     
-    // Si el porcentaje es mayor a 99%, no mostrar carita
-    if (percentage > 99) {
-        progressFace.textContent = '';
+    // Si llega o supera 100%, mostrar ataúd
+    if (percentage >= 100) {
+        progressFace.textContent = '⚰️';
         return;
     }
     
