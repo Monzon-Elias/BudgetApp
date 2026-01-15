@@ -11,10 +11,34 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
+const defaultAllowedOrigins = [
+    'http://localhost:5500',
+    'https://budgetsite.netlify.app'
+];
+
+const envAllowedOrigins = (process.env.FRONTEND_ORIGINS || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+const allowedOrigins = [...new Set([...defaultAllowedOrigins, ...envAllowedOrigins])];
+
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production' 
-        ? 'https://budgetsite.netlify.app' 
-        : 'http://localhost:5500',
+    origin: (origin, callback) => {
+        if (!origin) {
+            return callback(null, true);
+        }
+
+        const isAllowed =
+            allowedOrigins.includes(origin) ||
+            origin.endsWith('.netlify.app');
+
+        if (isAllowed) {
+            return callback(null, true);
+        }
+
+        return callback(new Error(`CORS not allowed for origin: ${origin}`));
+    },
     credentials: true
 }));
 app.use(express.json());
