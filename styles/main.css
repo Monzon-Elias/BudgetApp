@@ -447,6 +447,27 @@ footer {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
+.slow-notice {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    max-width: 420px;
+    text-align: center;
+}
+
+.slow-notice-emoji {
+    font-size: 1.4rem;
+    animation: bounce 2s ease-in-out infinite;
+}
+
+.slow-notice p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    margin: 0;
+}
+
 /* Input Validation Styles */
 .input-error {
     border: 2px solid #e74c3c !important;

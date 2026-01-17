@@ -9,6 +9,7 @@ let budgetItems = [];
 let _editMode = false;
 let _id = 0;
 let token = null;
+let slowNoticeTimer = null;
 
 // Clase BudgetItem
 class BudgetItem {
@@ -165,11 +166,28 @@ async function addBudgetItem() {
         });
         
         if (!response) return;
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Error creating item:', errorData);
+            return;
+        }
         
         const data = await response.json();
         console.log('Item created:', data);
         
-        await loadBudgetItems();
+        const newItem = {
+            id: data._id,
+            Type: data.type,
+            Date: formatDate(data.dateCreated),
+            DateOriginal: data.dateCreated,
+            Description: data.description,
+            Amount: data.amount
+        };
+        
+        budgetItems.push(newItem);
+        
+        addRowToTable(newItem);
+        updateSummary();
         clearInputs();
     } catch (error) {
         console.error('Error adding budget item:', error);
@@ -194,9 +212,16 @@ async function deleteBudgetItem(e) {
         });
         
         if (!response) return;
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Error deleting item:', errorData);
+            return;
+        }
         
         console.log('Item deleted');
-        await loadBudgetItems();
+        budgetItems = budgetItems.filter((item) => item.id != budgetItemId);
+        removeRow(budgetItemId);
+        updateSummary();
     } catch (error) {
         console.error('Error deleting budget item:', error);
     }
@@ -264,15 +289,48 @@ async function updateBudgetItem() {
         });
         
         if (!response) return;
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Error updating item:', errorData);
+            return;
+        }
         
-        const result = await response.json();
+        await response.json();
         
-        await loadBudgetItems();
+        const updatedDate = date || new Date().toISOString().split('T')[0];
+        const budgetItem = budgetItems.find((item) => item.id == _id);
+        if (budgetItem) {
+            budgetItem.Type = type;
+            budgetItem.Description = description;
+            budgetItem.Amount = parseFloat(amount);
+            budgetItem.DateOriginal = updatedDate;
+            budgetItem.Date = formatDate(updatedDate);
+        }
+        
+        if (budgetItem) {
+            updateRow(budgetItem);
+        }
+        updateSummary();
         clearInputs();
         _editMode = false;
         _id = 0;
     } catch (error) {
         console.error('Error updating budget item:', error);
+    }
+}
+
+function handleTableClick(event) {
+    const target = event.target;
+    if (!target || target.tagName !== 'IMG') return;
+
+    const src = target.getAttribute('src') || '';
+    if (src.includes('delete')) {
+        deleteBudgetItem(event);
+        return;
+    }
+
+    if (src.includes('edit')) {
+        editBudgetItem(event);
     }
 }
 
@@ -285,10 +343,63 @@ function clearInputs() {
     clearAllErrors();
 }
 
-function populateTable() {
-    qs('#incomes').innerHTML = '';
-    qs('#expenses').innerHTML = '';
+function getTableBodyForType(type) {
+    return type === 'Income' ? qs('#incomes') : qs('#expenses');
+}
 
+function createRow(budgetItem) {
+    const row = document.createElement('tr');
+    row.dataset.id = budgetItem.id;
+    row.innerHTML = `
+        <td>${budgetItem.Type}</td>
+        <td>${budgetItem.Date}</td>
+        <td>${budgetItem.Description}</td>
+        <td>$${budgetItem.Amount}</td>
+        <td><img data-id='${budgetItem.id}' src='delete-24px.svg'></td>
+        <td><img data-id='${budgetItem.id}' src='edit-24px.svg'></td>
+    `;
+    return row;
+}
+
+function addRowToTable(budgetItem) {
+    const tableBody = getTableBodyForType(budgetItem.Type);
+    if (!tableBody) return;
+    tableBody.appendChild(createRow(budgetItem));
+}
+
+function updateRow(budgetItem) {
+    const existingRow = document.querySelector(`tr[data-id="${budgetItem.id}"]`);
+    const targetBody = getTableBodyForType(budgetItem.Type);
+    if (!targetBody) return;
+
+    if (!existingRow) {
+        addRowToTable(budgetItem);
+        return;
+    }
+
+    if (existingRow.parentElement !== targetBody) {
+        existingRow.remove();
+        addRowToTable(budgetItem);
+        return;
+    }
+
+    const cells = existingRow.children;
+    if (cells.length >= 4) {
+        cells[0].textContent = budgetItem.Type;
+        cells[1].textContent = budgetItem.Date;
+        cells[2].textContent = budgetItem.Description;
+        cells[3].textContent = `$${budgetItem.Amount}`;
+    }
+}
+
+function removeRow(budgetItemId) {
+    const row = document.querySelector(`tr[data-id="${budgetItemId}"]`);
+    if (row) {
+        row.remove();
+    }
+}
+
+function updateSummary() {
     // Sumar total de ingresos
     let totalIncome = budgetItems
         .filter((budgetItem) => budgetItem.Type == 'Income')
@@ -318,50 +429,29 @@ function populateTable() {
     
     // Actualizar caritas
     updateFaces(Math.min(percentage, 100));
+
+    // Cambiar sombra según presupuesto
+    shadowToggle(availableBudget);
+}
+
+function populateTable() {
+    qs('#incomes').innerHTML = '';
+    qs('#expenses').innerHTML = '';
     
     // Poblar tablas
     budgetItems
         .filter((budgetItem) => budgetItem.Type == 'Income')
         .forEach((budgetItem) => {
-            qs('#incomes').innerHTML += 
-                `<tr>
-                    <td>${budgetItem.Type}</td>
-                    <td>${budgetItem.Date}</td>
-                    <td>${budgetItem.Description}</td>
-                    <td>$${budgetItem.Amount}</td>
-                    <td><img data-id='${budgetItem.id}' src='delete-24px.svg'></td>
-                    <td><img data-id='${budgetItem.id}' src='edit-24px.svg'></td>
-                </tr>`; 
+            addRowToTable(budgetItem);
         });
         
     budgetItems
         .filter((budgetItem) => budgetItem.Type == 'Expense')
         .forEach((budgetItem) => {
-            qs('#expenses').innerHTML += 
-                `<tr>
-                    <td>${budgetItem.Type}</td>
-                    <td>${budgetItem.Date}</td>
-                    <td>${budgetItem.Description}</td>
-                    <td>$${budgetItem.Amount}</td>
-                    <td><img data-id='${budgetItem.id}' src='delete-24px.svg'></td>
-                    <td><img data-id='${budgetItem.id}' src='edit-24px.svg'></td>
-                </tr>`; 
+            addRowToTable(budgetItem);
         });
-
-    // Event listeners para eliminar
-    let trashCans = document.querySelectorAll('img[src*="del"]');
-    trashCans.forEach((image) => {
-        image.addEventListener('click', deleteBudgetItem);
-    });
-
-    // Event listeners para editar
-    let pencils = document.querySelectorAll('img[src*="edit"]');
-    pencils.forEach((image) => {
-        image.addEventListener('click', editBudgetItem);
-    });
-
-    // Cambiar sombra según presupuesto
-    shadowToggle(availableBudget);
+        
+    updateSummary();
 }
 
 function shadowToggle(availableBudget) {
@@ -405,12 +495,37 @@ function showDataLoading() {
     if (spinner) {
         spinner.style.display = 'flex';
     }
+
+    const slowNotice = document.getElementById('slowNotice');
+    if (slowNotice) {
+        slowNotice.style.display = 'none';
+    }
+
+    if (slowNoticeTimer) {
+        clearTimeout(slowNoticeTimer);
+    }
+
+    slowNoticeTimer = setTimeout(() => {
+        if (slowNotice) {
+            slowNotice.style.display = 'flex';
+        }
+    }, 5000);
 }
 
 function hideDataLoading() {
     const spinner = document.getElementById('dataLoadingSpinner');
     if (spinner) {
         spinner.style.display = 'none';
+    }
+
+    const slowNotice = document.getElementById('slowNotice');
+    if (slowNotice) {
+        slowNotice.style.display = 'none';
+    }
+
+    if (slowNoticeTimer) {
+        clearTimeout(slowNoticeTimer);
+        slowNoticeTimer = null;
     }
 }
 
@@ -445,6 +560,16 @@ document.addEventListener('DOMContentLoaded', async function() {
     qs('#amount').addEventListener('input', function() {
         clearFieldError('amount');
     });
+
+    // Delegated table actions
+    const incomesTable = qs('#incomes');
+    const expensesTable = qs('#expenses');
+    if (incomesTable) {
+        incomesTable.addEventListener('click', handleTableClick);
+    }
+    if (expensesTable) {
+        expensesTable.addEventListener('click', handleTableClick);
+    }
 
     // Cargar datos del servidor
     await loadBudgetItems();
